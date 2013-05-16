@@ -1,9 +1,11 @@
 <?php
-class Image {
+class Image 
+{
 	private $imageType;
 	private $imageResource = null;
 
-	function __construct($filename) {
+	function __construct($filename) 
+	{
 		$this->load($filename);
 	}
 
@@ -15,26 +17,26 @@ class Image {
 	public function load($filename)
 	{
 		$image_info = @getimagesize($filename);
-    	$this->imageType = $image_info[2];
+		$this->imageType = $image_info[2];
 
-    	switch ($this->imageType) {
-    		case IMAGETYPE_JPEG:
-    			$this->imageResource = @imagecreatefromjpeg($filename);
-    			break;
-    		
-    		case IMAGETYPE_GIF:
-    			$this->imageResource = @imagecreatefromgif($filename);
-    			break;
+		switch ($this->imageType) {
+			case IMAGETYPE_JPEG:
+				$this->imageResource = @imagecreatefromjpeg($filename);
+				break;
 
-    		case IMAGETYPE_PNG:
-    			$this->imageResource = @imagecreatefrompng($filename);
-    			break;
-    	}
+			case IMAGETYPE_GIF:
+				$this->imageResource = @imagecreatefromgif($filename);
+				break;
+
+			case IMAGETYPE_PNG:
+				$this->imageResource = @imagecreatefrompng($filename);
+				break;
+		}
 	}
 
 	public function printOut($imageType = "jpg")
 	{
-      	switch ($imageType) {
+		switch ($imageType) {
 			case "jpg":
 				header("Content-Type: image/jpeg");
 				imageinterlace($this->imageResource, 1);
@@ -86,15 +88,15 @@ class Image {
 	public function scale($scale)
 	{
 		$width = $this->getWidth() * $scale / 100;
-    	$height = $this->getHeight() * $scale / 100;
+		$height = $this->getHeight() * $scale / 100;
 
-    	$this->resize($width, $height);
+		$this->resize($width, $height);
 	}
 
 	public function scaleToWidth($width)
 	{
 		$scale = $width / $this->getWidth();
-      	$height = $this->getHeight() * $scale;
+		$height = $this->getHeight() * $scale;
 
 		$this->resize($width, $height);
 	}
@@ -102,27 +104,27 @@ class Image {
 	public function scaleToHeight($height)
 	{
 		$scale = $height / $this->getHeight();
-    	$width = $this->getWidth() * $scale;
+		$width = $this->getWidth() * $scale;
 
-    	$this->resize($width, $height);
+		$this->resize($width, $height);
 	}
 
 	public function resize($width, $height)
 	{
 		$resizedImageResource = @imagecreatetruecolor($width, $height);
 
-    	@imagecopyresampled(
-    		$resizedImageResource, 
-    		$this->imageResource, 
-    		0, 0, 
-    		0, 0, 
-    		$width, 
-    		$height, 
-    		$this->getWidth(),
-    		$this->getHeight()
-    	);
+		@imagecopyresampled(
+			$resizedImageResource, 
+			$this->imageResource, 
+			0, 0, 
+			0, 0, 
+			$width, 
+			$height, 
+			$this->getWidth(),
+			$this->getHeight()
+		);
 
-    	$this->imageResource = $resizedImageResource;
+		$this->imageResource = $resizedImageResource;
 	}
 
 	public function mergeWith(Image $image, $marginX = 0, $marginY = 0, $opacity = 100)
