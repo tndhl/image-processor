@@ -1,10 +1,15 @@
 <?php
 class Image {
-  private $imageType;
+	private $imageType;
 	private $imageResource = null;
 
 	function __construct($filename) {
 		$this->load($filename);
+	}
+
+	public function getResource()
+	{
+		return $this->imageResource;
 	}
 
 	public function load($filename)
@@ -27,10 +32,33 @@ class Image {
     	}
 	}
 
-	public function save($filename, $imageType = "jpeg")
+	public function printOut($imageType = "jpg")
 	{
+      	switch ($imageType) {
+			case "jpg":
+				header("Content-Type: image/jpeg");
+				imageinterlace($this->imageResource, 1);
+				imagejpeg($this->imageResource);
+				break;
+
+			case "png":
+				header("Content-Type: image/png");
+				imagepng($this->imageResource);
+				break;
+
+			case "gif":
+				header("Content-Type: image/gif");
+				imagegif($this->image);
+				break;
+		}
+	}
+
+	public function save($filename)
+	{
+		$imageType = end(explode(".", $filename));
+
 		switch ($imageType) {
-			case "jpeg":
+			case "jpg":
 				imageinterlace($this->imageResource, 1);
 				imagejpeg($this->imageResource, $filename);
 				break;
@@ -95,6 +123,19 @@ class Image {
     	);
 
     	$this->imageResource = $resizedImageResource;
+	}
+
+	public function mergeWith(Image $image, $marginX = 0, $marginY = 0, $opacity = 100)
+	{
+		@imagecopymerge(
+			$this->imageResource, 
+			$image->getResource(), 
+			$marginX, $marginY, 
+			0, 0, 
+			$image->getWidth(), 
+			$image->getHeight(), 
+			$opacity
+		);
 	}
 }
 ?>
